@@ -1,0 +1,134 @@
+:root {
+    --background: #11100d;
+    --panel: #1c1a15;
+    --amber: #e6a84f;
+    --amber-bright: #ffd27a;
+    --muted: #9c8d72;
+    --border: #4b3d28;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+}
+
+body {
+    overflow: hidden;
+    background:
+        radial-gradient(circle at center, #252117 0%, var(--background) 70%);
+    color: var(--amber-bright);
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.display {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(250px, 42%) 1fr;
+    gap: 4vw;
+    align-items: center;
+
+    width: 100vw;
+    height: 100vh;
+    padding: 6vh 6vw;
+}
+
+.artwork-panel {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.artwork-panel img {
+    width: min(38vw, 68vh);
+    height: min(38vw, 68vh);
+    object-fit: cover;
+
+    border: 1px solid var(--border);
+    box-shadow:
+        0 0 30px rgba(0, 0, 0, 0.8),
+        0 0 12px rgba(230, 168, 79, 0.12);
+}
+
+.metadata-panel {
+    min-width: 0;
+}
+
+.source {
+    margin-bottom: 1.5rem;
+
+    color: var(--amber);
+    font-size: clamp(0.8rem, 1.5vw, 1.25rem);
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+}
+
+h1 {
+    overflow: hidden;
+    margin: 0 0 1rem;
+
+    font-size: clamp(2rem, 5vw, 5rem);
+    font-weight: 500;
+    line-height: 1.05;
+    text-overflow: ellipsis;
+}
+
+h2 {
+    overflow: hidden;
+    margin: 0 0 0.75rem;
+
+    color: var(--amber);
+    font-size: clamp(1.25rem, 2.8vw, 2.7rem);
+    font-weight: 400;
+    text-overflow: ellipsis;
+}
+
+.album {
+    min-height: 1.5em;
+    margin: 0;
+
+    color: var(--muted);
+    font-size: clamp(1rem, 1.6vw, 1.5rem);
+}
+
+.progress-container {
+    margin-top: 3rem;
+}
+
+.progress-track {
+    height: 4px;
+    background: #403727;
+}
+
+.progress-bar {
+    width: 0;
+    height: 100%;
+    background: var(--amber);
+    transition: width 0.5s linear;
+}
+
+.time-row {
+    display: flex;
+    justify-content: space-between;
+
+    margin-top: 0.6rem;
+
+    color: var(--muted);
+    font-size: 0.9rem;
+    font-variant-numeric: tabular-nums;
+}
+
+.clock {
+    position: absolute;
+    top: 3vh;
+    right: 3vw;
+
+    color: var(--muted);
+    font-size: clamp(0.9rem, 1.5vw, 1.3rem);
+    font-variant-numeric: tabular-nums;
+}
