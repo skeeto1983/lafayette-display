@@ -1,7 +1,9 @@
 from flask import Flask, jsonify, send_from_directory
 
-app = Flask(__name__, static_folder="static")
+from app.services.moode import MoodeClient
 
+app = Flask(__name__, static_folder="static")
+moode = MoodeClient()
 
 @app.route("/")
 def index():
@@ -10,23 +12,33 @@ def index():
 
 @app.route("/api/status")
 def status():
-    """
-    Temporary playback information.
+    try:
+        playback = moode.get_current_playback()
+        playback["artwork"] = "/static/images/placeholder.svg"
+        return jsonify(playback)
+    except Exception as exc:
+        app.logger.exception("Unable to retrieve moOde playback status")
 
-    This will later be replaced with live information from moOde.
-    """
-    return jsonify(
-        {
-            "source": "Lafayette Streamer",
-            "state": "idle",
-            "artist": "No artist",
-            "title": "Ready",
-            "album": "",
-            "elapsed": 0,
-            "duration": 0,
-            "artwork": "/static/images/placeholder.svg",
-        }
-    )
+        return (
+            jsonify(
+                {
+                    "state": "unavailable",
+                    "artist": None,
+                    "album": None,
+                    "title": None,
+                    "station": None,
+                    "elapsed": None,
+                    "duration": None,
+                    "volume": None,
+                    "bitrate": None,
+                    "audio": None,
+                    "file": None,
+                    "artwork": "/static/images/placeholder.svg",
+                    "error": str(exc),
+                }
+            ),
+            503,
+        )
 
 
 @app.route("/health")
