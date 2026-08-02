@@ -2,13 +2,16 @@ import json
 import sqlite3
 from pathlib import Path
 from typing import Any
+from urllib.error import HTTPError, URLError
+from urllib.parse import urlencode
+from urllib.request import urlopen
 
 from mpd import MPDClient
 from mpd.base import ConnectionError as MPDConnectionError
 
 
 class MoodeClient:
-    """Read playback information from moOde's Spotify and MPD sources."""
+    """Read normalized playback information from moOde."""
 
     def __init__(
         self,
@@ -17,15 +20,17 @@ class MoodeClient:
         timeout: int = 10,
         spotify_metadata_file: str = "/var/local/www/spotmeta.json",
         moode_database: str = "/var/local/www/db/moode-sqlite3.db",
+        moode_web_url: str = "http://localhost",
     ) -> None:
         self.host = host
         self.port = port
         self.timeout = timeout
         self.spotify_metadata_file = Path(spotify_metadata_file)
         self.moode_database = Path(moode_database)
+        self.moode_web_url = moode_web_url.rstrip("/")
 
     def get_current_playback(self) -> dict[str, Any]:
-        """Return normalized playback information from the active source."""
+        """Return playback information from the active source."""
 
         if self._spotify_is_active():
             spotify = self._get_spotify_playback()
@@ -78,10 +83,15 @@ class MoodeClient:
                 else None
             ),
             "volume": None,
-            "bitrate": self._extract_bitrate(metadata.get("sformat")),
+            "bitrate": self._extract_bitrate(
+                metadata.get("sformat")
+            ),
             "audio": metadata.get("sformat"),
             "file": None,
-            "artwork": metadata.get("cover_url"),
+            "artwork": (
+                metadata.get("cover_url")
+                or "/static/images/placeholder.svg"
+            ),
             "is_live": False,
         }
 
@@ -92,17 +102,34 @@ class MoodeClient:
             status = client.status()
             song = client.currentsong()
 
-            title = song.get("title")
+            raw_title = song.get("title")
+            raw_station = song.get("name")
+
+            title = raw_title
             artist = song.get("artist")
 
             if not artist and title and " - " in title:
                 artist, title = title.split(" - ", 1)
 
             file_path = song.get("file")
+
             is_live = bool(
                 file_path
-                and file_path.startswith(("http://", "https://"))
+                and file_path.startswith(
+                    ("http://", "https://")
+                )
             )
+
+            artwork = "/static/images/placeholder.svg"
+
+            if is_live:
+                radio_artwork = self._get_radio_artwork(
+                    title=raw_title,
+                    station=raw_station,
+                )
+
+                if radio_artwork:
+                    artwork = radio_artwork
 
             bitrate = self._to_int(status.get("bitrate"))
 
@@ -115,21 +142,27 @@ class MoodeClient:
                     if is_live
                     else "moOde Audio"
                 ),
-                "station": self._clean_station_name(song.get("name")),
+                "station": self._clean_station_name(
+                    raw_station
+                ),
                 "state": status.get("state", "stop"),
                 "artist": artist,
                 "album": song.get("album"),
                 "title": title,
-                "elapsed": self._to_float(status.get("elapsed")),
+                "elapsed": self._to_float(
+                    status.get("elapsed")
+                ),
                 "duration": self._to_float(
                     song.get("duration")
                     or status.get("duration")
                 ),
-                "volume": self._to_int(status.get("volume")),
+                "volume": self._to_int(
+                    status.get("volume")
+                ),
                 "bitrate": bitrate,
                 "audio": status.get("audio"),
                 "file": file_path,
-                "artwork": "/static/images/placeholder.svg",
+                "artwork": artwork,
                 "is_live": is_live,
             }
 
@@ -144,6 +177,52 @@ class MoodeClient:
             except MPDConnectionError:
                 pass
 
+    def _get_radio_artwork(
+        self,
+        title: str | None,
+        station: str | None,
+    ) -> str | None:
+        if not title or not station:
+            return None
+
+        query = urlencode(
+            {
+                "cmd": "get_radiocover_url",
+                "title": title,
+                "station": station,
+            }
+        )
+
+        url = (
+            f"{self.moode_web_url}"
+            f"/command/radio.php?{query}"
+        )
+
+        try:
+            with urlopen(url, timeout=3) as response:
+                payload = response.read().decode("utf-8")
+
+            artwork = json.loads(payload)
+
+            if (
+                isinstance(artwork, str)
+                and artwork.startswith(
+                    ("http://", "https://")
+                )
+            ):
+                return artwork
+
+        except (
+            HTTPError,
+            URLError,
+            TimeoutError,
+            OSError,
+            json.JSONDecodeError,
+        ):
+            return None
+
+        return None
+
     def _connect(self) -> MPDClient:
         client = MPDClient()
         client.timeout = self.timeout
@@ -152,7 +231,9 @@ class MoodeClient:
         return client
 
     @staticmethod
-    def _clean_station_name(value: str | None) -> str | None:
+    def _clean_station_name(
+        value: str | None,
+    ) -> str | None:
         if not value:
             return None
 
@@ -160,11 +241,17 @@ class MoodeClient:
         return cleaned or None
 
     @staticmethod
-    def _extract_bitrate(value: str | None) -> int | None:
+    def _extract_bitrate(
+        value: str | None,
+    ) -> int | None:
         if not value:
             return None
 
-        digits = "".join(character for character in value if character.isdigit())
+        digits = "".join(
+            character
+            for character in value
+            if character.isdigit()
+        )
 
         try:
             return int(digits) if digits else None
@@ -174,13 +261,21 @@ class MoodeClient:
     @staticmethod
     def _to_int(value: Any) -> int | None:
         try:
-            return int(value) if value is not None else None
+            return (
+                int(value)
+                if value is not None
+                else None
+            )
         except (TypeError, ValueError):
             return None
 
     @staticmethod
     def _to_float(value: Any) -> float | None:
         try:
-            return float(value) if value is not None else None
+            return (
+                float(value)
+                if value is not None
+                else None
+            )
         except (TypeError, ValueError):
             return None
