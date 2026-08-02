@@ -23,26 +23,64 @@ function formatTime(totalSeconds) {
     return `${minutes}:${seconds.toString().padStart(2, "0")}`;
 }
 
+function parseRadioMetadata(status) {
+    let artist = status.artist || "";
+    let title = status.title || "No title";
+
+    /*
+     * Many internet-radio stations provide metadata as:
+     * "Artist - Track"
+     *
+     * Split it only when MPD did not already provide an artist.
+     */
+    if (!artist && title.includes(" - ")) {
+        const separatorIndex = title.indexOf(" - ");
+
+        artist = title.slice(0, separatorIndex).trim();
+        title = title.slice(separatorIndex + 3).trim();
+    }
+
+    return { artist, title };
+}
+
+function getSourceLabel(status) {
+    if (status.station) {
+        return status.station;
+    }
+
+    if (status.file?.startsWith("http")) {
+        return "Internet Radio";
+    }
+
+    return status.source || "moOde Audio";
+}
+
 function updateDisplay(status) {
-    elements.source.textContent = status.source || "Unknown source";
-    elements.title.textContent = status.title || "No title";
-    elements.artist.textContent = status.artist || "";
+    const metadata = parseRadioMetadata(status);
+
+    elements.source.textContent = getSourceLabel(status);
+    elements.title.textContent = metadata.title;
+    elements.artist.textContent = metadata.artist;
     elements.album.textContent = status.album || "";
 
-    if (status.artwork) {
-        elements.artwork.src = status.artwork;
-    }
+    elements.artwork.src =
+        status.artwork || "/static/images/placeholder.svg";
 
     const elapsed = Number(status.elapsed) || 0;
     const duration = Number(status.duration) || 0;
+    const hasDuration = duration > 0;
 
-    elements.elapsed.textContent = formatTime(elapsed);
-    elements.duration.textContent = formatTime(duration);
+    elements.elapsed.textContent = hasDuration
+        ? formatTime(elapsed)
+        : "LIVE";
 
-    const progress =
-        duration > 0
-            ? Math.min(100, Math.max(0, (elapsed / duration) * 100))
-            : 0;
+    elements.duration.textContent = hasDuration
+        ? formatTime(duration)
+        : "";
+
+    const progress = hasDuration
+        ? Math.min(100, Math.max(0, (elapsed / duration) * 100))
+        : 0;
 
     elements.progressBar.style.width = `${progress}%`;
 }
@@ -61,7 +99,14 @@ async function fetchStatus() {
         updateDisplay(status);
     } catch (error) {
         console.error("Unable to fetch playback status:", error);
-        elements.source.textContent = "Connection unavailable";
+
+        elements.source.textContent = "moOde unavailable";
+        elements.title.textContent = "Connection lost";
+        elements.artist.textContent = "";
+        elements.album.textContent = "";
+        elements.elapsed.textContent = "";
+        elements.duration.textContent = "";
+        elements.progressBar.style.width = "0%";
     }
 }
 
