@@ -14,7 +14,10 @@ def index():
 def status():
     try:
         playback = moode.get_current_playback()
-        playback["artwork"] = "/static/images/placeholder.svg"
+        playback.setdefault(
+ 	    "artwork",
+   	    "/static/images/placeholder.svg",
+)
         return jsonify(playback)
     except Exception as exc:
         app.logger.exception("Unable to retrieve moOde playback status")
