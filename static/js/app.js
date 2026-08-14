@@ -80,21 +80,37 @@ function updateDisplay(status) {
 
     const elapsed = Number(status.elapsed) || 0;
     const duration = Number(status.duration) || 0;
+
+    const isLive = Boolean(status.is_live);
+    const isSpotify = status.source === "Spotify Connect";
     const hasDuration = duration > 0;
 
-    elements.elapsed.textContent = hasDuration
-        ? formatTime(elapsed)
-        : "LIVE";
+    if (isLive) {
+        elements.elapsed.textContent = "LIVE";
+        elements.duration.textContent = "";
+        elements.progressBar.style.width = "0%";
+        elements.progressBar.parentElement.style.display = "none";
+    } else if (isSpotify) {
+        elements.elapsed.textContent = "";
+        elements.duration.textContent = hasDuration
+            ? formatTime(duration)
+            : "";
 
-    elements.duration.textContent = hasDuration
-        ? formatTime(duration)
-        : "";
+        elements.progressBar.style.width = "0%";
+        elements.progressBar.parentElement.style.display = "none";
+    } else {
+        elements.elapsed.textContent = formatTime(elapsed);
+        elements.duration.textContent = hasDuration
+            ? formatTime(duration)
+            : "";
 
-    const progress = hasDuration
-        ? Math.min(100, Math.max(0, (elapsed / duration) * 100))
-        : 0;
+        const progress = hasDuration
+            ? Math.min(100, Math.max(0, (elapsed / duration) * 100))
+            : 0;
 
-    elements.progressBar.style.width = `${progress}%`;
+        elements.progressBar.style.width = `${progress}%`;
+        elements.progressBar.parentElement.style.display = "";
+    }
 }
 
 async function fetchStatus() {
