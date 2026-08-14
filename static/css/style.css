@@ -44,6 +44,14 @@ body {
     align-items: center;
 }
 
+#artwork {
+    transition: opacity 0.4s ease;
+}
+
+#artwork.artwork-fade-out {
+    opacity: 0;
+}
+
 .artwork-panel img {
     width: min(38vw, 68vh);
     height: min(38vw, 68vh);

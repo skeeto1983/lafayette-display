@@ -63,8 +63,20 @@ function updateDisplay(status) {
     elements.artist.textContent = metadata.artist;
     elements.album.textContent = status.album || "";
 
-    elements.artwork.src =
+    const newArtwork =
         status.artwork || "/static/images/placeholder.svg";
+
+    if (elements.artwork.src !== new URL(newArtwork, window.location.href).href) {
+        elements.artwork.classList.add("artwork-fade-out");
+
+        setTimeout(() => {
+            elements.artwork.src = newArtwork;
+
+            elements.artwork.onload = () => {
+                elements.artwork.classList.remove("artwork-fade-out");
+            };
+        }, 200);
+    }
 
     const elapsed = Number(status.elapsed) || 0;
     const duration = Number(status.duration) || 0;
