@@ -1,10 +1,15 @@
 :root {
-    --background: #11100d;
-    --panel: #1c1a15;
-    --amber: #e6a84f;
-    --amber-bright: #ffd27a;
-    --muted: #9c8d72;
-    --border: #4b3d28;
+    --background: #0d0c0a;
+    --panel: #181611;
+
+    --amber: #d99a3e;
+    --amber-bright: #f2c36b;
+
+    --silver: #d1cec5;
+    --silver-muted: #8f8b82;
+
+    --muted: #95866d;
+    --border: #51432d;
 }
 
 * {
@@ -21,7 +26,12 @@ body {
 body {
     overflow: hidden;
     background:
-        radial-gradient(circle at center, #252117 0%, var(--background) 70%);
+        radial-gradient(
+            ellipse at center,
+            #211d14 0%,
+            #15130e 45%,
+            var(--background) 100%
+        );
     color: var(--amber-bright);
     font-family: Arial, Helvetica, sans-serif;
 }
@@ -29,19 +39,79 @@ body {
 .display {
     position: relative;
     display: grid;
-    grid-template-columns: minmax(250px, 42%) 1fr;
-    gap: 4vw;
+
+    grid-template-columns: 42% 1fr;
+    grid-template-rows: auto 1fr;
+    grid-template-areas:
+        "header header"
+        "artwork metadata";
+
+    column-gap: 4vw;
+    row-gap: 1.5vh;
+
     align-items: center;
 
     width: 100vw;
     height: 100vh;
-    padding: 6vh 6vw;
+
+    padding: 3vh 4vw;
 }
 
-.artwork-panel {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+.lafayette-header {
+    grid-area: header;
+    position: relative;
+    text-align: center;
+    margin: 0;
+}
+
+.lafayette-header::before,
+.lafayette-header::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    width: 18%;
+    height: 1px;
+    background: rgba(209, 206, 197, 0.18);
+}
+
+.lafayette-header::before {
+    left: 12%;
+}
+
+.lafayette-header::after {
+    right: 12%;
+}
+
+.brand {
+    font-size: 1.55rem;
+    font-weight: 600;
+    letter-spacing: 0.3rem;
+    color: var(--silver);
+    text-transform: uppercase;
+}
+
+.subtitle {
+    margin-top: 0.2rem;
+    font-size: 0.58rem;
+    letter-spacing: 0.15rem;
+    color: var(--amber);
+    text-transform: uppercase;
+}
+
+.artwork-panel img {
+    width: min(36vw, 60vh);
+    height: min(36vw, 60vh);
+    object-fit: cover;
+
+    border: 1px solid rgba(217, 154, 62, 0.35);
+    outline: 1px solid rgba(209, 206, 197, 0.10);
+    outline-offset: 3px;
+
+    box-shadow:
+        inset 0 0 0 1px rgba(255, 255, 255, 0.04),
+        0 0 0 5px rgba(22, 20, 16, 0.85),
+        0 8px 22px rgba(0, 0, 0, 0.55),
+        0 0 10px rgba(217, 154, 62, 0.08);
 }
 
 #artwork {
@@ -52,60 +122,55 @@ body {
     opacity: 0;
 }
 
-.artwork-panel img {
-    width: min(38vw, 68vh);
-    height: min(38vw, 68vh);
-    object-fit: cover;
-
-    border: 1px solid var(--border);
-    box-shadow:
-        0 0 30px rgba(0, 0, 0, 0.8),
-        0 0 12px rgba(230, 168, 79, 0.12);
-}
-
 .metadata-panel {
+    grid-area: metadata;
     min-width: 0;
+
+    padding-left: 2vw;
+    border-left: 1px solid rgba(217, 154, 62, 0.22);
 }
 
 .source {
-    margin-bottom: 1.5rem;
+    margin-bottom: 0.9rem;
 
     color: var(--amber);
-    font-size: clamp(0.8rem, 1.5vw, 1.25rem);
-    letter-spacing: 0.25em;
+    font-size: clamp(0.8rem, 1.4vw, 1.05rem);
+    font-weight: 600;
+    letter-spacing: 0.22em;
     text-transform: uppercase;
 }
 
 h1 {
     overflow: hidden;
-    margin: 0 0 1rem;
+    margin: 0 0 0.65rem;
 
-    font-size: clamp(2rem, 5vw, 5rem);
-    font-weight: 500;
+    color: var(--amber-bright);
+    font-size: clamp(2.2rem, 4.6vw, 4rem);
+    font-weight: 400;
     line-height: 1.05;
     text-overflow: ellipsis;
 }
 
 h2 {
     overflow: hidden;
-    margin: 0 0 0.75rem;
+    margin: 0 0 0.5rem;
 
     color: var(--amber);
-    font-size: clamp(1.25rem, 2.8vw, 2.7rem);
+    font-size: clamp(1.3rem, 2.5vw, 2rem);
     font-weight: 400;
     text-overflow: ellipsis;
 }
 
 .album {
-    min-height: 1.5em;
+    min-height: 1.3em;
     margin: 0;
 
     color: var(--muted);
-    font-size: clamp(1rem, 1.6vw, 1.5rem);
+    font-size: clamp(0.95rem, 1.6vw, 1.3rem);
 }
 
 .progress-container {
-    margin-top: 3rem;
+    margin-top: 1.6rem;
 }
 
 .progress-track {
