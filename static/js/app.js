@@ -8,6 +8,8 @@ const elements = {
     duration: document.getElementById("duration"),
     progressBar: document.getElementById("progress-bar"),
     clock: document.getElementById("clock"),
+    vuNeedleLeft: document.getElementById("vu-needle-left"),
+    vuNeedleRight: document.getElementById("vu-needle-right"),
 };
 
 function formatTime(totalSeconds) {
@@ -113,6 +115,49 @@ function updateDisplay(status) {
     }
 }
 
+function dbToNeedleAngle(db) {
+    const minDb = -40;
+    const maxDb = 3;
+
+    const clamped = Math.min(maxDb, Math.max(minDb, db));
+
+    const normalized =
+        (clamped - minDb) / (maxDb - minDb);
+
+    return -48 + normalized * 96;
+}
+
+async function fetchVu() {
+    try {
+        const response = await fetch("/api/vu", {
+            cache: "no-store",
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+        }
+
+        const levels = await response.json();
+
+        const leftAngle = dbToNeedleAngle(
+            Number(levels.left_db)
+        );
+
+        const rightAngle = dbToNeedleAngle(
+            Number(levels.right_db)
+        );
+
+        elements.vuNeedleLeft.style.transform =
+            `rotate(${leftAngle}deg)`;
+
+        elements.vuNeedleRight.style.transform =
+            `rotate(${rightAngle}deg)`;
+
+    } catch (error) {
+        console.error("Unable to fetch VU levels:", error);
+    }
+}
+
 async function fetchStatus() {
     try {
         const response = await fetch("/api/status", {
@@ -149,6 +194,8 @@ function updateClock() {
 
 fetchStatus();
 updateClock();
+fetchVu();
+setInterval(fetchVu, 100);
 
 setInterval(fetchStatus, 2000);
 setInterval(updateClock, 1000);
