@@ -1,0 +1,18 @@
+[Unit]
+Description=Lafayette Audio Streamer
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=hifipi
+Group=hifipi
+WorkingDirectory=/var/www/lafayette
+Environment="PATH=/var/www/lafayette/.venv/bin"
+Environment="PYTHONUNBUFFERED=1"
+ExecStart=/var/www/lafayette/.venv/bin/python /var/www/lafayette/app.py
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

@@ -1,9 +1,16 @@
 from flask import Flask, jsonify, send_from_directory
 
 from app.services.moode import MoodeClient
+from app.services.vu import VUService
 
 app = Flask(__name__, static_folder="static")
 moode = MoodeClient()
+vu = VUService()
+vu.start()
+
+@app.route("/api/vu")
+def vu_levels():
+    return jsonify(vu.get_levels())
 
 @app.route("/")
 def index():
