@@ -8,8 +8,9 @@ Type=simple
 User=hifipi
 Group=hifipi
 WorkingDirectory=/var/www/lafayette
-Environment="PATH=/var/www/lafayette/.venv/bin"
+Environment="PATH=/var/www/lafayette/.venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 Environment="PYTHONUNBUFFERED=1"
+ExecStartPre=/usr/local/bin/lafayette-preflight
 ExecStart=/var/www/lafayette/.venv/bin/python /var/www/lafayette/app.py
 Restart=on-failure
 RestartSec=5
