@@ -115,16 +115,45 @@ function updateDisplay(status) {
     }
 }
 
-function dbToNeedleAngle(db) {
-    const minDb = -40;
-    const maxDb = 3;
+function dbToNeedleAngle(dbfs) {
+    // Calibration:
+    // -14 dBFS corresponds to 0 VU.
+    const zeroVuDbfs = -10;
 
-    const clamped = Math.min(maxDb, Math.max(minDb, db));
+    const vu = dbfs - zeroVuDbfs;
 
-    const normalized =
-        (clamped - minDb) / (maxDb - minDb);
+    // Approximate positions of the printed analog scale.
+    const scale = [
+        { vu: -20, angle: -48 },
+        { vu: -10, angle: -34 },
+        { vu: -5,  angle: -18 },
+        { vu: 0,   angle: 20 },
+        { vu: 3,   angle: 48 },
+    ];
 
-    return -48 + normalized * 96;
+    if (vu <= scale[0].vu) {
+        return scale[0].angle;
+    }
+
+    if (vu >= scale[scale.length - 1].vu) {
+        return scale[scale.length - 1].angle;
+    }
+
+    for (let i = 0; i < scale.length - 1; i++) {
+        const lower = scale[i];
+        const upper = scale[i + 1];
+
+        if (vu >= lower.vu && vu <= upper.vu) {
+            const position =
+                (vu - lower.vu) /
+                (upper.vu - lower.vu);
+
+            return lower.angle +
+                position * (upper.angle - lower.angle);
+        }
+    }
+
+    return -48;
 }
 
 async function fetchVu() {

@@ -237,6 +237,7 @@ h2 {
 .vu-meter {
     flex: 1;
     min-width: 0;
+    position: relative;
 }
 
 .vu-label {
@@ -250,52 +251,196 @@ h2 {
 
 .vu-face {
     position: relative;
-    height: 86px;
+    width: 100%;
+    height: 108px;
 
     overflow: hidden;
-
-    border: 1px solid rgba(217, 154, 62, 0.32);
 
     background:
         radial-gradient(
             ellipse at 50% 115%,
-            rgba(242, 195, 107, 0.25) 0%,
-            rgba(217, 154, 62, 0.08) 45%,
-            rgba(14, 12, 9, 0.95) 76%
+            rgba(255, 198, 92, 0.16) 0%,
+            rgba(255, 198, 92, 0.07) 42%,
+            rgba(13, 12, 10, 0.95) 78%
+        ),
+        linear-gradient(
+            180deg,
+            #242017 0%,
+            #17140f 100%
         );
 
+    border: 1px solid rgba(230, 168, 79, 0.48);
+    border-radius: 7px;
+
     box-shadow:
-        inset 0 0 12px rgba(217, 154, 62, 0.08),
-        0 3px 10px rgba(0, 0, 0, 0.4);
-}
-
-.vu-scale {
-    position: absolute;
-    top: 0.55rem;
-    left: 0.65rem;
-    right: 0.65rem;
-
-    display: flex;
-    justify-content: space-between;
-
-    color: var(--muted);
-    font-size: 0.52rem;
+        inset 0 0 22px rgba(0, 0, 0, 0.75),
+        inset 0 1px 0 rgba(255, 215, 145, 0.10),
+        0 2px 8px rgba(0, 0, 0, 0.35);
 }
 
 .vu-needle {
     position: absolute;
-    left: 50%;
-    bottom: -22px;
+    left: calc(50% - 1px);
+    bottom: 2px;
 
     width: 2px;
-    height: 82px;
+    height: 91px;
 
-    background: var(--amber-bright);
+    background: linear-gradient(
+        to top,
+        #ba6b35 0%,
+        #e5a059 45%,
+        #ffd08a 100%
+    );
 
     transform-origin: 50% 100%;
     transform: rotate(-48deg);
 
-    box-shadow: 0 0 6px rgba(242, 195, 107, 0.45);
+    box-shadow:
+        0 0 3px rgba(255, 183, 94, 0.75);
 
     transition: transform 70ms linear;
+
+    z-index: 3;
+}
+
+.vu-face::after {
+    content: "";
+
+    position: absolute;
+    left: 50%;
+    bottom: -7px;
+
+    width: 18px;
+    height: 18px;
+
+    transform: translateX(-50%);
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle at 38% 32%,
+            #d2ad69 0%,
+            #816135 28%,
+            #332718 65%,
+            #15110c 100%
+        );
+
+    border: 1px solid rgba(230, 168, 79, 0.55);
+
+    box-shadow:
+        0 1px 3px rgba(0, 0, 0, 0.8),
+        inset 0 1px 1px rgba(255, 224, 165, 0.28);
+
+    z-index: 4;
+}
+
+.vu-scale {
+    position: absolute;
+    inset: 0;
+
+    pointer-events: none;
+    z-index: 2;
+}
+
+.vu-scale span {
+    position: absolute;
+
+    font-size: 0.48rem;
+    letter-spacing: 0.02em;
+
+    color: rgba(230, 168, 79, 0.82);
+
+    transform: translate(-50%, -50%);
+}
+
+.vu-scale span:nth-child(1) {
+    left: 8%;
+    top: 47%;
+}
+
+.vu-scale span:nth-child(2) {
+    left: 24%;
+    top: 27%;
+}
+
+.vu-scale span:nth-child(3) {
+    left: 40%;
+    top: 18%;
+}
+
+.vu-scale span:nth-child(4) {
+    left: 62%;
+    top: 18%;
+}
+
+.vu-scale span:nth-child(5) {
+    left: 88%;
+    top: 47%;
+}
+
+.vu-ticks {
+    position: absolute;
+    left: 50%;
+    bottom: 2px;
+
+    width: 1px;
+    height: 1px;
+
+    z-index: 2;
+}
+
+.vu-ticks span {
+    position: absolute;
+
+    left: 0;
+    bottom: 0;
+
+    width: 1px;
+    height: 76px;
+
+    transform-origin: 50% 100%;
+    transform: rotate(var(--a));
+}
+
+.vu-ticks span::before {
+    content: "";
+
+    position: absolute;
+    top: 0;
+    left: 50%;
+
+    width: 1px;
+    height: 4px;
+
+    transform: translateX(-50%);
+
+    background: rgba(230, 168, 79, 0.55);
+}
+
+.vu-ticks span.major::before {
+    width: 1px;
+    height: 8px;
+
+    background: rgba(230, 168, 79, 0.90);
+}
+
+.vu-mark {
+    position: absolute;
+
+    left: 50%;
+    bottom: 30px;
+
+    transform: translateX(-50%);
+
+    font-size: 0.45rem;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+
+    color: rgba(230, 168, 79, 0.38);
+
+    pointer-events: none;
+
+    z-index: 2;
 }
