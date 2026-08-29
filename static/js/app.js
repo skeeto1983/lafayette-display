@@ -10,6 +10,9 @@ const elements = {
     clock: document.getElementById("clock"),
     vuNeedleLeft: document.getElementById("vu-needle-left"),
     vuNeedleRight: document.getElementById("vu-needle-right"),
+    vuScreensaver: document.getElementById("vu-screensaver"),
+    vuScreensaverLeft: document.getElementById("vu-screensaver-left"),
+    vuScreensaverRight: document.getElementById("vu-screensaver-right"),
 };
 
 function formatTime(totalSeconds) {
@@ -176,11 +179,23 @@ async function fetchVu() {
             Number(levels.right_db)
         );
 
+        // Small Now Playing VU meters
         elements.vuNeedleLeft.style.transform =
             `rotate(${leftAngle}deg)`;
 
         elements.vuNeedleRight.style.transform =
             `rotate(${rightAngle}deg)`;
+
+        // Full-screen VU meters
+        if (elements.vuScreensaverLeft) {
+            elements.vuScreensaverLeft.style.transform =
+                `rotate(${leftAngle}deg)`;
+        }
+
+        if (elements.vuScreensaverRight) {
+            elements.vuScreensaverRight.style.transform =
+                `rotate(${rightAngle}deg)`;
+        }
 
     } catch (error) {
         console.error("Unable to fetch VU levels:", error);
@@ -224,7 +239,59 @@ function updateClock() {
 fetchStatus();
 updateClock();
 fetchVu();
-setInterval(fetchVu, 100);
+// ---------------------------------------------------------
+// VU screensaver
+// ---------------------------------------------------------
+
+const SCREENSAVER_DELAY = 5 * 60 * 1000;
+
+let screensaverTimer = null;
+
+function showVuScreensaver() {
+    if (!elements.vuScreensaver) {
+        return;
+    }
+
+    elements.vuScreensaver.classList.remove("hidden");
+}
+
+function hideVuScreensaver() {
+    if (!elements.vuScreensaver) {
+        return;
+    }
+
+    elements.vuScreensaver.classList.add("hidden");
+}
+
+function resetScreensaverTimer() {
+    if (screensaverTimer) {
+        clearTimeout(screensaverTimer);
+    }
+
+    screensaverTimer = setTimeout(
+        showVuScreensaver,
+        SCREENSAVER_DELAY
+    );
+}
+
+function handleUserActivity() {
+    // If the screensaver is showing, any touch wakes the display.
+    if (
+        elements.vuScreensaver &&
+        !elements.vuScreensaver.classList.contains("hidden")
+    ) {
+        hideVuScreensaver();
+    }
+
+    resetScreensaverTimer();
+}
+
+// Touchscreen and mouse interaction
+document.addEventListener("pointerdown", handleUserActivity);
+
+// Start the timer when Lafayette loads.
+resetScreensaverTimer();
+setInterval(fetchVu, 250);
 
 setInterval(fetchStatus, 2000);
 setInterval(updateClock, 1000);

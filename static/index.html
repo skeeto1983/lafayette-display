@@ -131,6 +131,94 @@
 
         <div id="clock" class="clock"></div>
     </main>
+                    <div class="time-row">
+                    <span id="elapsed">0:00</span>
+                    <span id="duration">0:00</span>
+                </div>
+            </div>
+        </section>
+
+        <div id="clock" class="clock"></div>
+    </main>
+
+    <!-- Full-screen VU display -->
+    <div id="vu-screensaver" class="vu-screensaver hidden">
+
+        <!-- LEFT meter -->
+        <div class="vu-screensaver-meter">
+            <div class="vu-screensaver-label">LEFT</div>
+
+            <div class="vu-screensaver-face">
+                <div class="vu-screensaver-scale">
+                    <span style="--a:-48deg; --counter:48deg;"><b>-20</b></span>
+                    <span style="--a:-34deg; --counter:34deg;"><b>-10</b></span>
+                    <span style="--a:-18deg; --counter:18deg;"><b>-5</b></span>
+                    <span style="--a:20deg; --counter:-20deg;"><b>0</b></span>
+                    <span style="--a:48deg; --counter:-48deg;"><b>+3</b></span>
+                </div>
+
+                <div class="vu-screensaver-ticks">
+                    <span class="major" style="--a:-48deg"></span>
+                    <span style="--a:-41deg"></span>
+
+                    <span class="major" style="--a:-34deg"></span>
+                    <span style="--a:-26deg"></span>
+
+                    <span class="major" style="--a:-18deg"></span>
+                    <span style="--a:-8deg"></span>
+                    <span style="--a:6deg"></span>
+
+                    <span class="major" style="--a:20deg"></span>
+                    <span style="--a:29deg"></span>
+                    <span style="--a:38deg"></span>
+
+                    <span class="major" style="--a:48deg"></span>
+                </div>
+
+                <div class="vu-screensaver-mark">VU</div>
+
+                <div id="vu-screensaver-left"
+                 class="vu-screensaver-needle"></div>
+           </div>
+        </div>
+
+        <!-- RIGHT meter -->
+        <div class="vu-screensaver-meter">
+            <div class="vu-screensaver-label">RIGHT</div>
+
+            <div class="vu-screensaver-face">
+                <div class="vu-screensaver-scale">
+                    <span style="--a:-48deg; --counter:48deg;"><b>-20</b></span>
+                    <span style="--a:-34deg; --counter:34deg;"><b>-10</b></span>
+                    <span style="--a:-18deg; --counter:18deg;"><b>-5</b></span>
+                    <span style="--a:20deg; --counter:-20deg;"><b>0</b></span>
+                    <span style="--a:48deg; --counter:-48deg;"><b>+3</b></span>
+                </div>
+
+                <div class="vu-screensaver-ticks">
+                    <span class="major" style="--a:-48deg"></span>
+                    <span style="--a:-40deg"></span>
+                    <span class="major" style="--a:-32deg"></span>
+                    <span style="--a:-24deg"></span>
+                    <span class="major" style="--a:-16deg"></span>
+                    <span style="--a:-8deg"></span>
+                    <span class="major" style="--a:0deg"></span>
+                    <span style="--a:8deg"></span>
+                    <span style="--a:16deg"></span>
+                    <span style="--a:24deg"></span>
+                    <span style="--a:32deg"></span>
+                    <span style="--a:40deg"></span>
+                    <span class="major" style="--a:48deg"></span>
+                </div>
+
+                <div class="vu-screensaver-mark">VU</div>
+
+                <div id="vu-screensaver-right"
+                     class="vu-screensaver-needle"></div>
+            </div>
+        </div>
+
+    </div>
 
     <script src="/static/js/app.js"></script>
 </body>

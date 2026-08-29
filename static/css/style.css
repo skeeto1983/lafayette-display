@@ -299,7 +299,7 @@ h2 {
     box-shadow:
         0 0 3px rgba(255, 183, 94, 0.75);
 
-    transition: transform 70ms linear;
+    transition: transform 200ms linear;
 
     z-index: 3;
 }
@@ -443,4 +443,234 @@ h2 {
     pointer-events: none;
 
     z-index: 2;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.vu-screensaver {
+    position: fixed;
+    inset: 0;
+
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+
+    padding: 20px;
+
+    background:
+        radial-gradient(
+            ellipse at 50% 110%,
+            rgba(230, 168, 79, 0.08),
+            transparent 58%
+        ),
+        #0d0c0a;
+
+    z-index: 1000;
+}
+
+.vu-screensaver-meter {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.vu-screensaver-label {
+    margin-bottom: 10px;
+
+    text-align: center;
+
+    font-size: 0.8rem;
+    letter-spacing: 0.28em;
+
+    color: rgba(230, 168, 79, 0.72);
+}
+
+.vu-screensaver-face {
+    position: relative;
+
+    width: 100%;
+    height: 320px;
+
+    overflow: hidden;
+
+    background:
+        radial-gradient(
+            ellipse at 50% 115%,
+            rgba(255, 198, 92, 0.17) 0%,
+            rgba(255, 198, 92, 0.07) 42%,
+            rgba(13, 12, 10, 0.96) 78%
+        ),
+        linear-gradient(
+            180deg,
+            #242017 0%,
+            #17140f 100%
+        );
+
+    border: 1px solid rgba(230, 168, 79, 0.50);
+    border-radius: 10px;
+
+    box-shadow:
+        inset 0 0 38px rgba(0, 0, 0, 0.78),
+        inset 0 1px 0 rgba(255, 215, 145, 0.10),
+        0 3px 12px rgba(0, 0, 0, 0.40);
+}
+
+.vu-screensaver-scale {
+    position: absolute;
+    left: 50%;
+    bottom: 6px;
+
+    width: 1px;
+    height: 1px;
+
+    z-index: 2;
+}
+
+.vu-screensaver-scale span {
+    position: absolute;
+
+    left: 0;
+    bottom: 0;
+
+    width: 1px;
+    height: 210px;
+
+    transform-origin: 50% 100%;
+    transform: rotate(var(--a));
+}
+
+.vu-screensaver-scale span b {
+    position: absolute;
+
+    top: -19px;
+    left: 50%;
+
+    transform:
+        translateX(-50%)
+        rotate(var(--counter));
+
+    font-size: 0.8rem;
+    font-weight: 400;
+
+    color: rgba(230, 168, 79, 0.86);
+}
+
+.vu-screensaver-ticks {
+    position: absolute;
+    left: 50%;
+    bottom: 6px;
+
+    width: 1px;
+    height: 1px;
+
+    z-index: 2;
+}
+
+.vu-screensaver-ticks span {
+    position: absolute;
+
+    left: 0;
+    bottom: 0;
+
+    width: 1px;
+    height: 205px;
+
+    transform-origin: 50% 100%;
+    transform: rotate(var(--a));
+}
+
+.vu-screensaver-ticks span::before {
+    content: "";
+
+    position: absolute;
+    top: 0;
+    left: 50%;
+
+    width: 2px;
+    height: 9px;
+
+    transform: translateX(-50%);
+
+    background: rgba(230, 168, 79, 0.55);
+}
+
+.vu-screensaver-ticks span.major::before {
+    height: 17px;
+
+    background: rgba(230, 168, 79, 0.92);
+}
+
+.vu-screensaver-mark {
+    position: absolute;
+
+    left: 50%;
+    bottom: 72px;
+
+    transform: translateX(-50%);
+
+    font-size: 1rem;
+    font-weight: 500;
+    letter-spacing: 0.20em;
+
+    color: rgba(230, 168, 79, 0.40);
+
+    z-index: 2;
+}
+
+.vu-screensaver-needle {
+    position: absolute;
+
+    left: calc(50% - 1px);
+    bottom: 6px;
+
+    width: 3px;
+    height: 198px;
+
+    background: linear-gradient(
+        to top,
+        #ba6b35 0%,
+        #e5a059 45%,
+        #ffd08a 100%
+    );
+
+    transform-origin: 50% 100%;
+    transform: rotate(-48deg);
+
+    box-shadow:
+        0 0 5px rgba(255, 183, 94, 0.78);
+
+    transition: transform 200ms linear;
+
+    z-index: 3;
+}
+
+.vu-screensaver-face::after {
+    content: "";
+
+    position: absolute;
+
+    left: 50%;
+    bottom: -3px;
+
+    width: 28px;
+    height: 28px;
+
+    transform: translateX(-50%);
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle at 38% 32%,
+            #d2ad69 0%,
+            #816135 28%,
+            #332718 65%,
+            #15110c 100%
+        );
+
+    border: 1px solid rgba(230, 168, 79, 0.55);
+
+    z-index: 4;
 }
